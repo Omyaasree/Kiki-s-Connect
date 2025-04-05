@@ -14,7 +14,7 @@ import {
   Check as CheckIcon,
   Info as InfoIcon
 } from "@mui/icons-material"
-import { deepPurple, amber, blueGrey, teal } from '@mui/material/colors'
+import { deepPurple, blueGrey, teal } from '@mui/material/colors'
 
 // Import Firebase
 import { firestore } from "../firebase"
