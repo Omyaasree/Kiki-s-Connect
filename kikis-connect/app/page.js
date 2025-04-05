@@ -15,6 +15,10 @@ import { ThemeProvider, createTheme } from "@mui/material/styles"
 import CssBaseline from '@mui/material/CssBaseline'
 import Snackbar from '@mui/material/Snackbar'
 import Alert from '@mui/material/Alert'
+import Dialog from '@mui/material/Dialog';
+import DialogActions from '@mui/material/DialogActions';
+import DialogContent from '@mui/material/DialogContent';
+import DialogTitle from '@mui/material/DialogTitle';
 
 // Import Firebase
 import { firestore } from "../firebase";
@@ -162,10 +166,7 @@ export default function ContactsPage() {
           >
           Add to Contacts
         </Button>
-
         </Box>
-        
-        
       </Container>
     </ThemeProvider>
   );
