@@ -238,7 +238,7 @@ export default function ContactsPage() {
       <Box>
         <Container maxWidth="md">
           {/* Help Button - Added here */}
-          <Box sx={{ position: 'absolute', top: 20, right: 20 }}>
+          <Box sx={{ position: 'absolute', top: 20, right: 20, zIndex: 999 }}>
             <Button
               variant="contained"
               onClick={() => setHelpOpen(true)}
