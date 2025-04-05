@@ -118,59 +118,156 @@ export default function ContactsPage() {
     )))
   }
   
-  // Handle adding to phone contacts
-  const addToPhoneContacts = async (selectedContacts) => {
-    if (!selectedContacts || selectedContacts.length === 0) {
-      setSnackbar({
-        open: true,
-        message: "No contacts selected.",
-        severity: "warning"
-      })
-      return
-    }
+  // // Handle adding to phone contacts
+  // const addToPhoneContacts = async (selectedContacts) => {
+  //   if (!selectedContacts || selectedContacts.length === 0) {
+  //     setSnackbar({
+  //       open: true,
+  //       message: "No contacts selected.",
+  //       severity: "warning"
+  //     })
+  //     return
+  //   }
 
-     // Try using Contacts API (not yet supported for writing on most browsers)
-     if ("contacts" in navigator && "ContactsManager" in window) {
-      try {
-        const props = ["name", "tel"]
-        await navigator.contacts.select(props)  // mostly for reading
-        setSnackbar({
-          open: true,
-          message: "Contacts added successfully!",
-          severity: "success"
-        })
-      } catch (error) {
-        console.log("Contacts API error:", error)
-        setSnackbar({
-          open: true,
-          message: "Error adding contacts: " + (error.message || "Please try again"),
-          severity: "error"
-        })
-      }
-    }
+  //    // Try using Contacts API (not yet supported for writing on most browsers)
+  //    if ("contacts" in navigator && "ContactsManager" in window) {
+  //     try {
+  //       const props = ["name", "tel"]
+  //       await navigator.contacts.select(props)  // mostly for reading
+  //       setSnackbar({
+  //         open: true,
+  //         message: "Contacts added successfully!",
+  //         severity: "success"
+  //       })
+  //     } catch (error) {
+  //       console.log("Contacts API error:", error)
+  //       setSnackbar({
+  //         open: true,
+  //         message: "Error adding contacts: " + (error.message || "Please try again"),
+  //         severity: "error"
+  //       })
+  //     }
+  //   }
 
-     // Fallback: Generate a single vCard with all selected contacts
-     const vCards = selectedContacts.map((contact) => {
-      return [
-        "BEGIN:VCARD",
-        "VERSION:3.0",
-        `FN:${contact.name}`,  // Properly formatted with backticks
-        `N:;${contact.name};;;`,  // This will put the full name in the First Name field
-        `TEL;TYPE=CELL:${contact.rawPhone}`,
-        "END:VCARD"
-      ].join("\r\n");
-    }).join("\r\n");
+  //    // Fallback: Generate a single vCard with all selected contacts
+  //    const vCards = selectedContacts.map((contact) => {
+  //     return [
+  //       "BEGIN:VCARD",
+  //       "VERSION:3.0",
+  //       `FN:${contact.name}`,  // Properly formatted with backticks
+  //       `N:;${contact.name};;;`,  // This will put the full name in the First Name field
+  //       `TEL;TYPE=CELL:${contact.rawPhone}`,
+  //       "END:VCARD"
+  //     ].join("\r\n");
+  //   }).join("\r\n");
     
   
-    const blob = new Blob([vCards], { type: "text/vcard" })
-    const url = URL.createObjectURL(blob)
-    const link = document.createElement("a")
-    link.href = url
-    link.download = "contacts.vcf"
-    document.body.appendChild(link)
-    link.click()
-    document.body.removeChild(link)
+  //   const blob = new Blob([vCards], { type: "text/vcard" })
+  //   const url = URL.createObjectURL(blob)
+  //   const link = document.createElement("a")
+  //   link.href = url
+  //   link.download = "contacts.vcf"
+  //   document.body.appendChild(link)
+  //   link.click()
+  //   document.body.removeChild(link)
+  // }
+  // Handle adding to phone contacts
+ const addToPhoneContacts = async () => {
+  // Get only checked contacts
+  const checkedContacts = contacts.filter(contact => contact.checked)
+ 
+  if (checkedContacts.length === 0) {
+    setSnackbar({
+      open: true,
+      message: "Please select at least one contact",
+      severity: "warning"
+    })
+    return
   }
+ 
+  // Check if the Contacts API is available
+  if ('contacts' in navigator && 'ContactsManager' in window) {
+    try {
+      const properties = ['name', 'tel']
+      const opts = { multiple: true }
+     
+      // Prepare contacts in the format expected by the Contacts API
+      const contactsToAdd = checkedContacts.map(contact => {
+        const phoneNumber = contact.rawPhone.length === 10 ?
+          `+1${contact.rawPhone}` : contact.rawPhone
+       
+        return {
+          name: contact.name,
+          tel: phoneNumber
+        }
+      })
+     
+      // Request to add contacts
+      const contacts = await navigator.contacts.select(properties, opts)
+     
+      setSnackbar({
+        open: true,
+        message: "Contacts added successfully!",
+        severity: "success"
+      })
+    } catch (error) {
+      console.error("Error adding contacts:", error)
+      setSnackbar({
+        open: true,
+        message: "Error adding contacts: " + (error.message || "Please try again"),
+        severity: "error"
+      })
+    }
+  } else {
+    // Fallback for browsers that don't support the Contacts API
+    try {
+      // Process each contact one by one
+      for (const contact of checkedContacts) {
+        // Create a contact object
+        const newContact = {
+          name: contact.name,
+          tel: contact.rawPhone.length === 10 ? `+1${contact.rawPhone}` : contact.rawPhone
+        }
+       
+        // Create a virtual anchor element to trigger the download
+        const vCard = createVCard(newContact)
+        const blob = new Blob([vCard], { type: 'text/vcard' })
+        const url = window.URL.createObjectURL(blob)
+       
+        const a = document.createElement('a')
+        a.href = url
+        a.download = `${contact.name}.vcf`
+        document.body.appendChild(a)
+        a.click()
+       
+        // Clean up
+        window.URL.revokeObjectURL(url)
+        document.body.removeChild(a)
+      }
+     
+      setSnackbar({
+        open: true,
+        message: "Contact files created. Please save them to add to your contacts.",
+        severity: "success"
+      })
+    } catch (error) {
+      console.error("Error creating contact files:", error)
+      setSnackbar({
+        open: true,
+        message: "Error creating contact files: " + (error.message || "Please try again"),
+        severity: "error"
+      })
+    }
+  }
+}
+ // Helper function to create a vCard format for contacts
+const createVCard = (contact) => {
+  return `BEGIN:VCARD
+VERSION:3.0
+FN:${contact.name}
+TEL;TYPE=CELL:${contact.tel}
+END:VCARD`
+}
 
   
   // Close snackbar
