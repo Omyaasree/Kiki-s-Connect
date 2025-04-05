@@ -240,80 +240,7 @@ export default function ContactsPage() {
     )))
   }
   
-  // Handle adding to phone contacts
-  const addToPhoneContacts = async () => {
-    // Get only checked contacts
-    const checkedContacts = contacts.filter(contact => contact.checked)
-    
-    if (checkedContacts.length === 0) {
-      return
-    }
-    
-    // Check if the Contacts API is available
-    if ('contacts' in navigator && 'ContactsManager' in window) {
-      try {
-        const properties = ['name', 'tel']
-        const opts = { multiple: true }
-        
-       
-        const contactsToAdd = checkedContacts.map(contact => {
-          // Ensure the phone number includes the country code for proper formatting
-          const phoneNumber = `+1${contact.rawPhone}` 
-          
-          return {
-            name: contact.name,
-            tel: phoneNumber
-          }
-        })
-        
-        // Request to add contacts
-        const contacts = await navigator.contacts.select(properties, opts)
-        
-      } catch (error) {
-        console.error("Error adding contacts:", error)
-      }
-    } else {
-      // Fallback for browsers that don't support the Contacts API
-      // This approach uses a different method that's more widely supported
-      try {
-        // Process each contact one by one
-        for (const contact of checkedContacts) {
-          // Create a contact object
-          const newContact = {
-            name: contact.name,
-            tel: `+1${contact.rawPhone}` 
-          }
-          
-          // Create a virtual anchor element to trigger the download
-          const vCard = createVCard(newContact)
-          const blob = new Blob([vCard], { type: 'text/vcard' })
-          const url = window.URL.createObjectURL(blob)
-          
-          const a = document.createElement('a')
-          a.href = url
-          a.download = `${contact.name}.vcf`
-          document.body.appendChild(a)
-          a.click()
-          
-          // Clean up
-          window.URL.revokeObjectURL(url)
-          document.body.removeChild(a)
-        }
-        
-      } catch (error) {
-        console.error("Error creating contact files:", error)
-      }
-    }
-  }
   
-  // Helper function to create a vCard format for contacts
-  const createVCard = (contact) => {
-    return `BEGIN:VCARD
-VERSION:3.0
-FN:${contact.name}
-TEL;TYPE=CELL:${contact.tel}
-END:VCARD`
-  }
   
   
   return (
@@ -342,7 +269,7 @@ END:VCARD`
             variant="contained"
             fullWidth
             startIcon={<AddCircleIcon />}
-            onClick={addToPhoneContacts}
+            //onClick={addToPhoneContacts}
           >
             Add to Contacts
           </Button>
