@@ -1,26 +1,6 @@
 "use client"
 
 import { useState, useEffect } from "react"
-<<<<<<< HEAD
-import Box from "@mui/material/Box"
-import Checkbox from "@mui/material/Checkbox"
-import Button from "@mui/material/Button"
-import Typography from "@mui/material/Typography"
-import List from "@mui/material/List"
-import ListItem from "@mui/material/ListItem"
-import ListItemText from "@mui/material/ListItemText"
-import ListItemIcon from "@mui/material/ListItemIcon"
-import Container from "@mui/material/Container"
-import AddCircleIcon from "@mui/icons-material/AddCircle"
-import { ThemeProvider, createTheme } from "@mui/material/styles"
-import CssBaseline from '@mui/material/CssBaseline'
-import Snackbar from '@mui/material/Snackbar'
-import Alert from '@mui/material/Alert'
-import Dialog from '@mui/material/Dialog';
-import DialogActions from '@mui/material/DialogActions';
-import DialogContent from '@mui/material/DialogContent';
-import DialogTitle from '@mui/material/DialogTitle';
-=======
 import { 
   Box, Avatar, Divider, Checkbox, Button, Typography, List, ListItem, 
   ListItemText, ListItemIcon, Container,
@@ -34,12 +14,7 @@ import {
   Check as CheckIcon,
   Info as InfoIcon
 } from "@mui/icons-material"
-<<<<<<< HEAD
-import { deepPurple, amber, blueGrey, teal } from '@mui/material/colors'
->>>>>>> fe1a2c32207f5652abd44c1e8f6f9923149618e7
-=======
 import { deepPurple, blueGrey, teal } from '@mui/material/colors'
->>>>>>> 7bd728275b0e49743c14a2be8b2c79153d780a05
 
 // Import Firebase
 import { firestore } from "../firebase"
@@ -205,37 +180,6 @@ export default function ContactsPage() {
   return (
     <ThemeProvider theme={theme}>
       <CssBaseline />
-<<<<<<< HEAD
-      <Container maxWidth="md" sx={{ py: 4 }}>
-        <Typography variant="h5" align="center">Important Contacts</Typography>
-        
-        {contacts.length === 0 ? (
-          <Typography align="center" sx={{ mt: 2 }}>No contacts found</Typography>
-        ) : (
-          <List>
-            {contacts.map((contact) => (
-              <ListItem onClick={() => handleCheckboxChange(contact.id)} key={contact.id}>
-                <ListItemIcon>
-                  <Checkbox edge="start" checked={contact.checked} tabIndex={-1} disableRipple />
-                </ListItemIcon>
-                <ListItemText primary={contact.name} secondary={contact.phone} /> 
-              </ListItem>
-            ))}
-          </List>
-        )}
-        
-        <Box sx={{ mt: 4 }}>
-        <Button
-          variant="contained"
-          fullWidth
-          startIcon={<AddCircleIcon />}
-          onClick={() => addToPhoneContacts(contacts.filter(c => c.checked))}
-          >
-          Add to Contacts
-        </Button>
-        </Box>
-      </Container>
-=======
       <Box>
         <Container maxWidth="md">
           <Card >
@@ -419,7 +363,6 @@ export default function ContactsPage() {
           {snackbar.message}
         </Alert>
       </Snackbar>
->>>>>>> fe1a2c32207f5652abd44c1e8f6f9923149618e7
     </ThemeProvider>
   )
 }
