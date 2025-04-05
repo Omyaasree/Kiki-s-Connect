@@ -14,7 +14,10 @@ import {
   Check as CheckIcon,
   Info as InfoIcon
 } from "@mui/icons-material"
-import { deepPurple, amber, blueGrey, teal } from '@mui/material/colors'
+import { deepPurple, blueGrey, teal } from '@mui/material/colors'
+
+import HelpIcon from "@mui/icons-material/Help"
+import Dialog from '@mui/material/Dialog'
 
 // Import Firebase
 import { firestore } from "../firebase"
@@ -40,6 +43,55 @@ const theme = createTheme({
   }
 })
 
+function HelpDialog({ open, onClose }) {
+  return (
+    <Dialog open={open} onClose={onClose}>
+      <Box sx={{ p: 3, maxWidth: 400 }}>
+        <Typography variant="h4" gutterBottom>
+          How to Use This Page
+        </Typography>
+
+        <Typography variant="body1" paragraph>
+          Use the checkboxes to select which phone numbers you'd like to save.
+        </Typography>
+
+        <Typography variant = "h6">
+          <strong>For iOS:</strong>
+        </Typography>
+          
+        <Typography variant="body1" paragraph>
+          <ol style={{ paddingLeft: "1.2em" }}>
+            <li>Click <strong>Add to Contacts</strong> below</li>
+            <li>Tap the download icon in the top right corner</li>
+            <li>Select <strong>Contacts</strong> from the options</li>
+            <li>Choose <strong>Add All Contacts</strong></li>
+            <li>When prompted, select <strong>Create New Contacts</strong></li>
+          </ol>
+        </Typography>
+
+        <Typography variant = "h6">
+          <strong>For Android:</strong>
+        </Typography>
+
+        <Typography variant="body1" paragraph>
+          <ol style={{ paddingLeft: "1.2em" }}>
+            <li>Click <strong>Add to Contacts</strong> below</li>
+            <li>When prompted, select <strong>Download</strong></li>
+            <li>After the download completes, tap <strong>Open File</strong></li>
+            <li>Click <strong>Import</strong>, choose a destination, and confirm by selecting <strong>"Import"</strong> again</li>
+          </ol>
+        </Typography>
+
+        <Box sx={{ display: "flex", justifyContent: "flex-end", mt: 2 }}>
+          <Button onClick={onClose} variant="contained">
+            Close
+          </Button>
+        </Box>
+      </Box>
+    </Dialog>
+  );
+}
+
 export default function ContactsPage() {
   const [contacts, setContacts] = useState([])
   const [snackbar, setSnackbar] = useState({
@@ -47,6 +99,8 @@ export default function ContactsPage() {
     message: "",
     severity: "info"
   })
+  const [helpOpen, setHelpOpen] = useState(false)
+
   
   // Get a random color for each contact's avatar
   const getAvatarColor = (name) => {
@@ -118,157 +172,59 @@ export default function ContactsPage() {
     )))
   }
   
-  // // Handle adding to phone contacts
-  // const addToPhoneContacts = async (selectedContacts) => {
-  //   if (!selectedContacts || selectedContacts.length === 0) {
-  //     setSnackbar({
-  //       open: true,
-  //       message: "No contacts selected.",
-  //       severity: "warning"
-  //     })
-  //     return
-  //   }
+  // Handle adding to phone contacts
+  const addToPhoneContacts = async (selectedContacts) => {
+    if (!selectedContacts || selectedContacts.length === 0) {
+      setSnackbar({
+        open: true,
+        message: "No contacts selected.",
+        severity: "warning"
+      })
+      return
+    }
 
-  //    // Try using Contacts API (not yet supported for writing on most browsers)
-  //    if ("contacts" in navigator && "ContactsManager" in window) {
-  //     try {
-  //       const props = ["name", "tel"]
-  //       await navigator.contacts.select(props)  // mostly for reading
-  //       setSnackbar({
-  //         open: true,
-  //         message: "Contacts added successfully!",
-  //         severity: "success"
-  //       })
-  //     } catch (error) {
-  //       console.log("Contacts API error:", error)
-  //       setSnackbar({
-  //         open: true,
-  //         message: "Error adding contacts: " + (error.message || "Please try again"),
-  //         severity: "error"
-  //       })
-  //     }
-  //   }
+     // Try using Contacts API (not yet supported for writing on most browsers)
+     if ("contacts" in navigator && "ContactsManager" in window) {
+      try {
+        const props = ["name", "tel"]
+        await navigator.contacts.select(props)  // mostly for reading
+        setSnackbar({
+          open: true,
+          message: "Contacts added successfully!",
+          severity: "success"
+        })
+      } catch (error) {
+        console.log("Contacts API error:", error)
+        setSnackbar({
+          open: true,
+          message: "Error adding contacts: " + (error.message || "Please try again"),
+          severity: "error"
+        })
+      }
+    }
 
-  //    // Fallback: Generate a single vCard with all selected contacts
-  //    const vCards = selectedContacts.map((contact) => {
-  //     return [
-  //       "BEGIN:VCARD",
-  //       "VERSION:3.0",
-  //       `FN:${contact.name}`,  // Properly formatted with backticks
-  //       `N:;${contact.name};;;`,  // This will put the full name in the First Name field
-  //       `TEL;TYPE=CELL:${contact.rawPhone}`,
-  //       "END:VCARD"
-  //     ].join("\r\n");
-  //   }).join("\r\n");
+     // Fallback: Generate a single vCard with all selected contacts
+     const vCards = selectedContacts.map((contact) => {
+      return [
+        "BEGIN:VCARD",
+        "VERSION:3.0",
+        `FN:${contact.name}`,  // Properly formatted with backticks
+        `N:;${contact.name};;;`,  // This will put the full name in the First Name field
+        `TEL;TYPE=CELL:${contact.rawPhone}`,
+        "END:VCARD"
+      ].join("\r\n");
+    }).join("\r\n");
     
   
-  //   const blob = new Blob([vCards], { type: "text/vcard" })
-  //   const url = URL.createObjectURL(blob)
-  //   const link = document.createElement("a")
-  //   link.href = url
-  //   link.download = "contacts.vcf"
-  //   document.body.appendChild(link)
-  //   link.click()
-  //   document.body.removeChild(link)
-  // }
-  // Handle adding to phone contacts
- const addToPhoneContacts = async () => {
-  // Get only checked contacts
-  const checkedContacts = contacts.filter(contact => contact.checked)
- 
-  if (checkedContacts.length === 0) {
-    setSnackbar({
-      open: true,
-      message: "Please select at least one contact",
-      severity: "warning"
-    })
-    return
+    const blob = new Blob([vCards], { type: "text/vcard" })
+    const url = URL.createObjectURL(blob)
+    const link = document.createElement("a")
+    link.href = url
+    link.download = "contacts.vcf"
+    document.body.appendChild(link)
+    link.click()
+    document.body.removeChild(link)
   }
- 
-  // Check if the Contacts API is available
-  if ('contacts' in navigator && 'ContactsManager' in window) {
-    try {
-      const properties = ['name', 'tel']
-      const opts = { multiple: true }
-     
-      // Prepare contacts in the format expected by the Contacts API
-      const contactsToAdd = checkedContacts.map(contact => {
-        const phoneNumber = contact.rawPhone.length === 10 ?
-          `+1${contact.rawPhone}` : contact.rawPhone
-       
-        return {
-          name: contact.name,
-          tel: phoneNumber
-        }
-      })
-     
-      // Request to add contacts
-      const contacts = await navigator.contacts.select(properties, opts)
-     
-      setSnackbar({
-        open: true,
-        message: "Contacts added successfully!",
-        severity: "success"
-      })
-    } catch (error) {
-      console.error("Error adding contacts:", error)
-      setSnackbar({
-        open: true,
-        message: "Error adding contacts: " + (error.message || "Please try again"),
-        severity: "error"
-      })
-    }
-  } else {
-    // Fallback for browsers that don't support the Contacts API
-    try {
-      // Process each contact one by one
-      for (const contact of checkedContacts) {
-        // Create a contact object
-        const newContact = {
-          name: contact.name,
-          tel: contact.rawPhone.length === 10 ? `+1${contact.rawPhone}` : contact.rawPhone
-        }
-       
-        // Create a virtual anchor element to trigger the download
-        const vCard = createVCard(newContact)
-        const blob = new Blob([vCard], { type: 'text/vcard' })
-        const url = window.URL.createObjectURL(blob)
-       
-        const a = document.createElement('a')
-        a.href = url
-        a.download = `${contact.name}.vcf`
-        document.body.appendChild(a)
-        a.click()
-       
-        // Clean up
-        window.URL.revokeObjectURL(url)
-        document.body.removeChild(a)
-      }
-     
-      setSnackbar({
-        open: true,
-        message: "Contact files created. Please save them to add to your contacts.",
-        severity: "success"
-      })
-    } catch (error) {
-      console.error("Error creating contact files:", error)
-      setSnackbar({
-        open: true,
-        message: "Error creating contact files: " + (error.message || "Please try again"),
-        severity: "error"
-      })
-    }
-  }
-}
- // Helper function to create a vCard format for contacts
-const createVCard = (contact) => {
-  return `BEGIN:VCARD
-VERSION:3.0
-FN:${contact.name}
-TEL;TYPE=CELL:${contact.tel}
-END:VCARD`
-}
-
   
   // Close snackbar
   const handleCloseSnackbar = () => {
@@ -278,8 +234,29 @@ END:VCARD`
   return (
     <ThemeProvider theme={theme}>
       <CssBaseline />
+      <HelpDialog open={helpOpen} onClose={() => setHelpOpen(false)} />
       <Box>
         <Container maxWidth="md">
+          {/* Help Button - Added here */}
+          <Box sx={{ position: 'absolute', top: 20, right: 20, zIndex: 999 }}>
+            <Button
+              variant="contained"
+              onClick={() => setHelpOpen(true)}
+              sx={{
+                minWidth: 0,
+                width: 40,
+                height: 40,
+                padding: 0,
+                borderRadius: "50%",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+              }}
+            >
+              <HelpIcon />
+            </Button>
+          </Box>
+
           <Card >
             {/* Header */}
             <Box
@@ -402,7 +379,7 @@ END:VCARD`
               <Button
                 variant="contained"
                 fullWidth
-                onClick={addToPhoneContacts}
+                onClick={() => addToPhoneContacts(contacts.filter(c => c.checked))}
                 sx={{ 
                   py: 1.5,
                   boxShadow: "0 4px 10px rgba(103, 58, 183, 0.2)",
