@@ -32,6 +32,9 @@ export default function ContactsPage() {
     { id: "1", name: "Office of Student Housing", phone: "(415) 422-6824", checked: true },
     { id: "2", name: "USF Public Safety", phone: "(415) 422-2911", checked: true },
     { id: "3", name: "Title IX Coordinator", phone: "(415) 422-4563", checked: true },
+    { id: "4", name: "Office of the Dean of Students", phone: "(415) 422-5330", checked: true },
+    { id: "5", name: "Office of Undergraduate Admission", phone: "(415) 422-6563", checked: true },
+    { id: "6", name: "Alumni", phone: "(415) 422-6431", checked: true },
   ])
   
   const handleCheckboxChange = (id) => {
@@ -45,7 +48,7 @@ export default function ContactsPage() {
             <Typography variant="h5" align="center">Important Contacts</Typography>
             <List>
               {contacts.map((contact) => (
-                <ListItem button key={contact.id} onClick={() => handleCheckboxChange(contact.id)}>
+                <ListItem button onClick={() => handleCheckboxChange(contact.id)} key={contact.id}>
                   <ListItemIcon>
                     <Checkbox edge="start" checked={contact.checked} tabIndex={-1} disableRipple />
                   </ListItemIcon>
