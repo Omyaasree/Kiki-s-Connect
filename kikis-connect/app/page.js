@@ -48,7 +48,7 @@ export default function ContactsPage() {
             <Typography variant="h5" align="center">Important Contacts</Typography>
             <List>
               {contacts.map((contact) => (
-                <ListItem button onClick={() => handleCheckboxChange(contact.id)} key={contact.id}>
+                <ListItem onClick={() => handleCheckboxChange(contact.id)} key={contact.id}>
                   <ListItemIcon>
                     <Checkbox edge="start" checked={contact.checked} tabIndex={-1} disableRipple />
                   </ListItemIcon>
