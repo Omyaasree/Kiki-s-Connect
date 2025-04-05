@@ -4,7 +4,7 @@ import segno
 
 # Generate QR with a Kiki-themed message
 
-url = "https://kikisconnect-pi.vercel.app/"#"https://stackoverflow.com/questions/881092/how-to-merge-a-specific-commit-in-git"
+url = "http://localhost:3001/"#"https://kikisconnect-pi.vercel.app/"#"https://stackoverflow.com/questions/881092/how-to-merge-a-specific-commit-in-git"
 qr_kiki = segno.make_qr(url)
 
 
