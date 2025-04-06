@@ -287,7 +287,7 @@ export default function ContactsPage() {
               </Box>
             </Box>
             
-            {/* Contacts List */}
+            {/* Contacts List - Added maxHeight and overflow properties for scrolling */}
             <CardContent sx={{ px: 0 }}>
               {contacts.length === 0 ? (
                 <Box 
@@ -305,73 +305,75 @@ export default function ContactsPage() {
                   </Typography>
                 </Box>
               ) : (
-                <List sx={{ width: '100%' }}>
-                  {contacts.map((contact) => (
-                    <Box key={contact.id}>
-                      <ListItem 
-                        button 
-                        onClick={() => handleCheckboxChange(contact.id)}
-                        sx={{ 
-                          py: 2,
-                          px: 3,
-                          transition: "all 0.2s",
-                          "&:hover": { 
-                            bgcolor: contact.checked ? 'rgba(103, 58, 183, 0.05)' : 'rgba(0, 0, 0, 0.02)' 
-                          },
-                          bgcolor: contact.checked ? 'rgba(103, 58, 183, 0.02)' : 'transparent'
-                        }}
-                      >
-                        <ListItemIcon>
-                          <Checkbox 
-                            edge="start" 
-                            checked={contact.checked} 
-                            sx={{ 
-                              '& .MuiSvgIcon-root': { 
-                                fontSize: 24,
-                                color: contact.checked ? blueGrey[700] : undefined
-                              } 
-                            }}
-                          />
-                        </ListItemIcon>
-                        
-                        <Avatar 
+                <Box sx={{ maxHeight: "500px", overflow: "auto" }}>
+                  <List sx={{ width: '100%' }}>
+                    {contacts.map((contact) => (
+                      <Box key={contact.id}>
+                        <ListItem 
+                          button 
+                          onClick={() => handleCheckboxChange(contact.id)}
                           sx={{ 
-                            bgcolor: getAvatarColor(contact.name),
-                            mr: 2,
-                            width: 40,
-                            height: 40,
-                            fontSize: '1rem',
-                            fontWeight: 'bold'
+                            py: 2,
+                            px: 3,
+                            transition: "all 0.2s",
+                            "&:hover": { 
+                              bgcolor: contact.checked ? 'rgba(103, 58, 183, 0.05)' : 'rgba(0, 0, 0, 0.02)' 
+                            },
+                            bgcolor: contact.checked ? 'rgba(103, 58, 183, 0.02)' : 'transparent'
                           }}
                         >
-                          {getInitials(contact.name)}
-                        </Avatar>
-                        
-                        <ListItemText 
-                          primary={
-                            <Typography 
-                              variant="body1" 
+                          <ListItemIcon>
+                            <Checkbox 
+                              edge="start" 
+                              checked={contact.checked} 
                               sx={{ 
-                                fontWeight: contact.checked ? 600 : 500,
-                                color: contact.checked ? blueGrey[900] : 'text.primary'
+                                '& .MuiSvgIcon-root': { 
+                                  fontSize: 24,
+                                  color: contact.checked ? blueGrey[700] : undefined
+                                } 
                               }}
-                            >
-                              {contact.name}
-                            </Typography>
-                          } 
-                          secondary={
-                            <Box display="flex" alignItems="center" gap={0.5}>
-                              <Typography variant="body2" color="text.secondary">
-                                {contact.phone}
+                            />
+                          </ListItemIcon>
+                          
+                          <Avatar 
+                            sx={{ 
+                              bgcolor: getAvatarColor(contact.name),
+                              mr: 2,
+                              width: 40,
+                              height: 40,
+                              fontSize: '1rem',
+                              fontWeight: 'bold'
+                            }}
+                          >
+                            {getInitials(contact.name)}
+                          </Avatar>
+                          
+                          <ListItemText 
+                            primary={
+                              <Typography 
+                                variant="body1" 
+                                sx={{ 
+                                  fontWeight: contact.checked ? 600 : 500,
+                                  color: contact.checked ? blueGrey[900] : 'text.primary'
+                                }}
+                              >
+                                {contact.name}
                               </Typography>
-                            </Box>
-                          } 
-                        />
-                      </ListItem>
-                      <Divider variant="inset" component="li" />
-                    </Box>
-                  ))}
-                </List>
+                            } 
+                            secondary={
+                              <Box display="flex" alignItems="center" gap={0.5}>
+                                <Typography variant="body2" color="text.secondary">
+                                  {contact.phone}
+                                </Typography>
+                              </Box>
+                            } 
+                          />
+                        </ListItem>
+                        <Divider variant="inset" component="li" />
+                      </Box>
+                    ))}
+                  </List>
+                </Box>
               )}
             </CardContent>
             
