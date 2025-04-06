@@ -78,7 +78,7 @@ function HelpDialog({ open, onClose }) {
             <li>Click <strong>Add to Contacts</strong> below</li>
             <li>When prompted, select <strong>Download</strong></li>
             <li>After the download completes, tap <strong>Open File</strong></li>
-            <li>Click <strong>Import</strong>, choose a destination, and confirm by selecting <strong>"Import"</strong> again</li>
+            <li>Click <strong>Import</strong>, choose a destination, and confirm by selecting <strong>Import</strong> again</li>
           </ol>
         </Typography>
 
